@@ -10,102 +10,130 @@
 <style>
 body{
     margin:0;
-    font-family:'Segoe UI',sans-serif;
+    font-family:'Poppins', 'Segoe UI', sans-serif;
     background:url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTdDTXGJIkjphkmC30hMYVpmbZwDdy1XzTH3jFDe16W10jQRXa5mLkwfmLq&s=10') no-repeat center center fixed;
     background-size:cover;
+    color:white;
 }
 
+/* overlay gelap elegan */
 .overlay{
-    background:rgba(0,0,0,0.6);
+    background:linear-gradient(135deg, rgba(0,0,0,0.75), rgba(0,40,0,0.75));
     min-height:100vh;
+    padding:60px 20px;
     display:flex;
-    justify-content:center;
+    flex-direction:column;
     align-items:center;
 }
 
-.card{
-    background:white;
-    width:100%;
-    max-width:550px;
-    border-radius:20px;
-    padding:30px;
-    box-shadow:0 25px 50px rgba(0,0,0,0.4);
+/* HEADER DINAS */
+.header-dinas{
     text-align:center;
+    margin-bottom:40px;
 }
 
-.header{
-    margin-bottom:20px;
-}
-
-.header h2{
+.header-dinas h1{
     margin:0;
-    font-size:18px;
+    font-size:26px;
+    letter-spacing:3px;
     font-weight:700;
 }
 
-.header p{
-    margin:5px 0 0 0;
-    font-size:13px;
-    color:#555;
+.header-dinas p{
+    margin-top:8px;
+    font-size:14px;
+    letter-spacing:2px;
+    opacity:0.9;
 }
 
-.tanggal{
+/* GLASS CARD */
+.card{
+    width:100%;
+    max-width:520px;
+    padding:35px;
+    border-radius:25px;
+    backdrop-filter:blur(18px);
+    background:rgba(255,255,255,0.12);
+    border:1px solid rgba(255,255,255,0.25);
+    box-shadow:0 25px 60px rgba(0,0,0,0.6);
+    text-align:center;
+}
+
+/* Title dalam card */
+.card h3{
+    margin:0 0 15px 0;
+    font-size:18px;
+    letter-spacing:2px;
     font-weight:600;
-    margin:15px 0;
 }
 
+/* tanggal */
+.tanggal{
+    margin-bottom:20px;
+    font-size:14px;
+    opacity:0.9;
+}
+
+/* list nama */
 ul{
     list-style:none;
     padding:0;
+    margin:0 0 25px 0;
 }
 
 li{
-    padding:10px;
-    margin:6px 0;
-    background:#f1f3f5;
-    border-radius:10px;
+    padding:12px;
+    margin:8px 0;
+    border-radius:14px;
+    background:rgba(255,255,255,0.15);
+    backdrop-filter:blur(8px);
     font-weight:500;
+    transition:0.3s;
 }
 
+li:hover{
+    background:rgba(255,255,255,0.25);
+    transform:scale(1.02);
+}
+
+/* button modern */
 button{
-    margin-top:15px;
-    padding:10px 18px;
+    padding:12px 24px;
     border:none;
-    border-radius:10px;
-    background:#2e7d32;
+    border-radius:30px;
+    background:linear-gradient(90deg,#4caf50,#2e7d32);
     color:white;
     font-weight:600;
     cursor:pointer;
+    letter-spacing:1px;
+    transition:0.3s;
 }
 
 button:hover{
-    background:#1b5e20;
+    transform:translateY(-2px);
+    box-shadow:0 10px 25px rgba(0,0,0,0.5);
 }
 </style>
 </head>
 <body>
 
 <div class="overlay">
-<div class="card">
 
-<div class="header">
-    <h2>DINAS PERTANIAN</h2>
-    <p>Kabupaten Indragiri Hilir</p>
-</div>
+    <div class="header-dinas">
+        <h1>DINAS PERTANIAN</h1>
+        <p>KABUPATEN INDRAGIRI HILIR</p>
+    </div>
 
-<h3>JADWAL PIKET HARI INI</h3>
+    <div class="card">
+        <h3>JADWAL PIKET HARI INI</h3>
+        <div class="tanggal" id="tanggal"></div>
+        <ul id="petugas"></ul>
+        <button onclick="downloadExcel()">Download Rekap Bulan Ini</button>
+    </div>
 
-<div class="tanggal" id="tanggal"></div>
-
-<ul id="petugas"></ul>
-
-<button onclick="downloadExcel()">Download Rekap Bulan Ini</button>
-
-</div>
 </div>
 
 <script>
-
 const pegawai = [
 "Heri Yanto","Andika Subeky","Juhaiman","Abd. Hamid","Taufik",
 "Dwi Apriyanto","Khaidir Saputra","Ari Wibowo","Adi Khairul Anam","Eko Priyono",
@@ -130,11 +158,7 @@ function generateSchedule(){
     const end = new Date("2026-12-31");
 
     for(let d = new Date(start); d <= end; d.setDate(d.getDate()+1)){
-        const day = d.getDay();
-        if(day === 0 || day === 6) continue;
-
-        const tanggal = d.toISOString().split("T")[0];
-        const hariNama = d.toLocaleDateString("id-ID",{weekday:"long"});
+        if(d.getDay() === 0 || d.getDay() === 6) continue;
 
         let petugas = [];
         for(let i=0;i<5;i++){
@@ -142,10 +166,13 @@ function generateSchedule(){
             indexPegawai++;
         }
 
-        schedule.push({tanggal,hariNama,petugas});
+        schedule.push({
+            tanggal: d.toISOString().split("T")[0],
+            hariNama: d.toLocaleDateString("id-ID",{weekday:"long"}),
+            petugas
+        });
     }
 }
-
 generateSchedule();
 
 const today = new Date().toISOString().split("T")[0];
@@ -167,7 +194,6 @@ if(dataHariIni){
 }
 
 function downloadExcel(){
-
     const now = new Date();
     const bulan = now.getMonth();
     const tahun = now.getFullYear();
@@ -180,24 +206,16 @@ function downloadExcel(){
     const namaBulan = now.toLocaleDateString("id-ID",{month:"long"});
 
     const header = [["Tanggal","Hari","Petugas 1","Petugas 2","Petugas 3","Petugas 4","Petugas 5"]];
-    
     const data = dataBulanIni.map(s=>[
-        s.tanggal,
-        s.hariNama,
-        s.petugas[0],
-        s.petugas[1],
-        s.petugas[2],
-        s.petugas[3],
-        s.petugas[4]
+        s.tanggal,s.hariNama,...s.petugas
     ]);
 
     const ws = XLSX.utils.aoa_to_sheet(header.concat(data));
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Jadwal");
-
     XLSX.writeFile(wb, `Rekap_Piket_${namaBulan}_${tahun}.xlsx`);
 }
-
 </script>
+
 </body>
 </html>
