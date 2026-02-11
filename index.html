@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Piket Harian 2026 - Dinas Pertanian Inhil</title>
+
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+
+<style>
+body{
+    margin:0;
+    font-family:'Segoe UI',system-ui,sans-serif;
+    background:url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTdDTXGJIkjphkmC30hMYVpmbZwDdy1XzTH3jFDe16W10jQRXa5mLkwfmLq&s=10') no-repeat center center fixed;
+    background-size:cover;
+}
+
+.overlay{
+    background:rgba(0,0,0,0.65);
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+}
+
+.card{
+    background:rgba(255,255,255,0.95);
+    backdrop-filter:blur(10px);
+    width:100%;
+    max-width:500px;
+    border-radius:20px;
+    padding:30px;
+    box-shadow:0 20px 40px rgba(0,0,0,0.4);
+    text-align:center;
+}
+
+h1{
+    margin:0;
+    font-size:20px;
+    letter-spacing:1px;
+}
+
+.sub{
+    font-size:13px;
+    color:#555;
+    margin-bottom:20px;
+}
+
+.tanggal{
+    font-weight:600;
+    margin-bottom:15px;
+}
+
+.nama-list{
+    list-style:none;
+    padding:0;
+    margin:0 0 20px 0;
+}
+
+.nama-list li{
+    padding:10px;
+    margin:6px 0;
+    background:#f1f3f5;
+    border-radius:10px;
+    font-weight:500;
+}
+
+button{
+    padding:10px 18px;
+    border:none;
+    border-radius:10px;
+    background:#2e7d32;
+    color:#fff;
+    font-weight:600;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+button:hover{
+    background:#1b5e20;
+}
+</style>
+</head>
+<body>
+
+<div class="overlay">
+    <div class="card">
+        <h1>JADWAL PIKET HARI INI</h1>
+        <div class="sub">Dinas Pertanian Kabupaten Indragiri Hilir</div>
+        <div class="tanggal" id="tanggal"></div>
+        <ul class="nama-list" id="petugas"></ul>
+        <button onclick="downloadExcel()">Download Jadwal 2026 (Excel)</button>
+    </div>
+</div>
+
+<script>
+
+// ==========================
+// DAFTAR PEGAWAI AKTIF
+// ==========================
+const pegawai = [
+"Heri Yanto","Andika Subeky","Juhaiman","Abd. Hamid","Taufik",
+"Dwi Apriyanto","Khaidir Saputra","Ari Wibowo","Adi Khairul Anam","Eko Priyono",
+"Arif Rahman","Muhammad Rizky","Andi Suardi","Berry Tri Yoka","Hendriansah",
+"Edi Santoso","Rano","Asliansyah","Burhanuddin","Heri Firman",
+"Deventer Putra P","Zikrullah","Dedy Suryandana","Decky Zulkamain","Iwan Radiardi",
+"Cecep Setiawan","M. Nur Oktaris","Rudi Guntara","Dico Maicandra","Kadris",
+"Endrio Naldo","Fiki Boys","Reinaldy Alvino","Edi Wibowo","Kaspul Khair",
+"Frenly Wirnawan","Bagus Pratama P","M. Aditia Yulianto","Murdiono",
+"Putra Andini","Safruddin","Jamaluddinsyah","Hasanudin","Reza Fahlevi A",
+"Anugerah Dwi P","Sunhil Mahendra","Maulana Rahman","M. Juraji","Sugeng Pranoto",
+"Feri Ibrahim","Agus Riyanto","Subarjo","Marzuki","Syahrudin",
+"Muhammad Rafai","Dahri Ansori","Abdu Samad","Oktarian Priyatno",
+"Andriansyah","Randi Febriadi","Sarno Budi Santoso","Sigit Santoso"
+];
+
+// ==========================
+// GENERATE JADWAL 2026 ADIL
+// ==========================
+
+let schedule = [];
+let indexPegawai = 0;
+
+function generateSchedule(){
+    const start = new Date("2026-01-01");
+    const end = new Date("2026-12-31");
+
+    for(let d = new Date(start); d <= end; d.setDate(d.getDate()+1)){
+        const day = d.getDay();
+        if(day === 0 || day === 6) continue;
+
+        const tanggal = d.toISOString().split("T")[0];
+        const hariNama = d.toLocaleDateString("id-ID",{weekday:"long"});
+
+        let petugas = [];
+        for(let i=0;i<5;i++){
+            petugas.push(pegawai[indexPegawai % pegawai.length]);
+            indexPegawai++;
+        }
+
+        schedule.push({tanggal,hariNama,petugas});
+    }
+}
+
+generateSchedule();
+
+// ==========================
+// TAMPILKAN HARI INI
+// ==========================
+
+const today = new Date().toISOString().split("T")[0];
+const dataHariIni = schedule.find(s => s.tanggal === today);
+
+document.getElementById("tanggal").textContent =
+new Date().toLocaleDateString("id-ID",{weekday:"long", year:"numeric", month:"long", day:"numeric"});
+
+const list = document.getElementById("petugas");
+
+if(dataHariIni){
+    dataHariIni.petugas.forEach(nama=>{
+        const li = document.createElement("li");
+        li.textContent = nama;
+        list.appendChild(li);
+    });
+}else{
+    list.innerHTML = "<li>Tidak ada jadwal hari ini</li>";
+}
+
+// ==========================
+// DOWNLOAD EXCEL FULL 2026
+// ==========================
+
+function downloadExcel(){
+    const header = [["Tanggal","Hari","Petugas 1","Petugas 2","Petugas 3","Petugas 4","Petugas 5"]];
+    const data = schedule.map(s=>[
+        s.tanggal,
+        s.hariNama,
+        s.petugas[0],
+        s.petugas[1],
+        s.petugas[2],
+        s.petugas[3],
+        s.petugas[4]
+    ]);
+
+    const ws = XLSX.utils.aoa_to_sheet(header.concat(data));
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Jadwal 2026");
+    XLSX.writeFile(wb, "Jadwal_Piket_2026.xlsx");
+}
+
+</script>
+
+</body>
+</html>
