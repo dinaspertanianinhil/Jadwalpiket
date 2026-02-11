@@ -90,7 +90,7 @@ button:hover{
         <div class="sub">Dinas Pertanian Kabupaten Indragiri Hilir</div>
         <div class="tanggal" id="tanggal"></div>
         <ul class="nama-list" id="petugas"></ul>
-        <button onclick="downloadExcel()">Download Jadwal 2026 (Excel)</button>
+        <button onclick="downloadExcel()">Download Jadwal Bulan Ini (Excel)</button>
     </div>
 </div>
 
@@ -99,6 +99,7 @@ button:hover{
 // ==========================
 // DAFTAR PEGAWAI AKTIF
 // ==========================
+
 const pegawai = [
 "Heri Yanto","Andika Subeky","Juhaiman","Abd. Hamid","Taufik",
 "Dwi Apriyanto","Khaidir Saputra","Ari Wibowo","Adi Khairul Anam","Eko Priyono",
@@ -116,7 +117,7 @@ const pegawai = [
 ];
 
 // ==========================
-// GENERATE JADWAL 2026 ADIL
+// GENERATE JADWAL 2026 (ADIL)
 // ==========================
 
 let schedule = [];
@@ -168,12 +169,25 @@ if(dataHariIni){
 }
 
 // ==========================
-// DOWNLOAD EXCEL FULL 2026
+// DOWNLOAD EXCEL BULAN BERJALAN
 // ==========================
 
 function downloadExcel(){
+
+    const now = new Date();
+    const bulan = now.getMonth();
+    const tahun = now.getFullYear();
+
+    const dataBulanIni = schedule.filter(s=>{
+        const d = new Date(s.tanggal);
+        return d.getMonth() === bulan && d.getFullYear() === tahun;
+    });
+
+    const namaBulan = now.toLocaleDateString("id-ID",{month:"long"});
+
     const header = [["Tanggal","Hari","Petugas 1","Petugas 2","Petugas 3","Petugas 4","Petugas 5"]];
-    const data = schedule.map(s=>[
+    
+    const data = dataBulanIni.map(s=>[
         s.tanggal,
         s.hariNama,
         s.petugas[0],
@@ -185,8 +199,9 @@ function downloadExcel(){
 
     const ws = XLSX.utils.aoa_to_sheet(header.concat(data));
     const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Jadwal 2026");
-    XLSX.writeFile(wb, "Jadwal_Piket_2026.xlsx");
+    XLSX.utils.book_append_sheet(wb, ws, "Jadwal");
+
+    XLSX.writeFile(wb, `Jadwal_Piket_${namaBulan}_${tahun}.xlsx`);
 }
 
 </script>
