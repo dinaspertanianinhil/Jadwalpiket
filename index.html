@@ -10,13 +10,12 @@
 <style>
 body{
     margin:0;
-    font-family:'Poppins', 'Segoe UI', sans-serif;
+    font-family:'Poppins','Segoe UI',sans-serif;
     background:url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTdDTXGJIkjphkmC30hMYVpmbZwDdy1XzTH3jFDe16W10jQRXa5mLkwfmLq&s=10') no-repeat center center fixed;
     background-size:cover;
     color:white;
 }
 
-/* overlay gelap elegan */
 .overlay{
     background:linear-gradient(135deg, rgba(0,0,0,0.75), rgba(0,40,0,0.75));
     min-height:100vh;
@@ -26,7 +25,6 @@ body{
     align-items:center;
 }
 
-/* HEADER DINAS */
 .header-dinas{
     text-align:center;
     margin-bottom:40px;
@@ -46,7 +44,6 @@ body{
     opacity:0.9;
 }
 
-/* GLASS CARD */
 .card{
     width:100%;
     max-width:520px;
@@ -59,7 +56,6 @@ body{
     text-align:center;
 }
 
-/* Title dalam card */
 .card h3{
     margin:0 0 15px 0;
     font-size:18px;
@@ -67,14 +63,12 @@ body{
     font-weight:600;
 }
 
-/* tanggal */
 .tanggal{
     margin-bottom:20px;
     font-size:14px;
     opacity:0.9;
 }
 
-/* list nama */
 ul{
     list-style:none;
     padding:0;
@@ -96,22 +90,30 @@ li:hover{
     transform:scale(1.02);
 }
 
-/* button modern */
-button{
-    padding:12px 24px;
+/* FLOATING RED DOT DOWNLOAD */
+.floating-download{
+    position:fixed;
+    right:20px;
+    bottom:20px;
+    width:60px;
+    height:60px;
+    border-radius:50%;
+    background:#e53935;
     border:none;
-    border-radius:30px;
-    background:linear-gradient(90deg,#4caf50,#2e7d32);
     color:white;
-    font-weight:600;
+    font-size:26px;
     cursor:pointer;
-    letter-spacing:1px;
+    box-shadow:0 12px 30px rgba(0,0,0,0.6);
+    display:flex;
+    align-items:center;
+    justify-content:center;
     transition:0.3s;
+    z-index:999;
 }
 
-button:hover{
-    transform:translateY(-2px);
-    box-shadow:0 10px 25px rgba(0,0,0,0.5);
+.floating-download:hover{
+    transform:scale(1.12);
+    background:#ff5252;
 }
 </style>
 </head>
@@ -128,10 +130,14 @@ button:hover{
         <h3>JADWAL PIKET HARI INI</h3>
         <div class="tanggal" id="tanggal"></div>
         <ul id="petugas"></ul>
-        <button onclick="downloadExcel()">Download Rekap Bulan Ini</button>
     </div>
 
 </div>
+
+<!-- FLOATING BUTTON -->
+<button class="floating-download" onclick="downloadExcel()" title="Download Excel">
+⬇️
+</button>
 
 <script>
 const pegawai = [
@@ -150,70 +156,69 @@ const pegawai = [
 "Andriansyah","Randi Febriadi","Sarno Budi Santoso","Sigit Santoso"
 ];
 
-let schedule = [];
-let indexPegawai = 0;
+let schedule=[];
+let indexPegawai=0;
 
 function generateSchedule(){
-    const start = new Date("2026-01-01");
-    const end = new Date("2026-12-31");
+    const start=new Date("2026-01-01");
+    const end=new Date("2026-12-31");
 
-    for(let d = new Date(start); d <= end; d.setDate(d.getDate()+1)){
-        if(d.getDay() === 0 || d.getDay() === 6) continue;
+    for(let d=new Date(start); d<=end; d.setDate(d.getDate()+1)){
+        if(d.getDay()===0 || d.getDay()===6) continue;
 
-        let petugas = [];
+        let petugas=[];
         for(let i=0;i<5;i++){
             petugas.push(pegawai[indexPegawai % pegawai.length]);
             indexPegawai++;
         }
 
         schedule.push({
-            tanggal: d.toISOString().split("T")[0],
-            hariNama: d.toLocaleDateString("id-ID",{weekday:"long"}),
+            tanggal:d.toISOString().split("T")[0],
+            hariNama:d.toLocaleDateString("id-ID",{weekday:"long"}),
             petugas
         });
     }
 }
 generateSchedule();
 
-const today = new Date().toISOString().split("T")[0];
-const dataHariIni = schedule.find(s => s.tanggal === today);
+document.getElementById("tanggal").textContent=
+new Date().toLocaleDateString("id-ID",{weekday:"long",year:"numeric",month:"long",day:"numeric"});
 
-document.getElementById("tanggal").textContent =
-new Date().toLocaleDateString("id-ID",{weekday:"long", year:"numeric", month:"long", day:"numeric"});
-
-const list = document.getElementById("petugas");
+const today=new Date().toISOString().split("T")[0];
+const dataHariIni=schedule.find(s=>s.tanggal===today);
+const list=document.getElementById("petugas");
 
 if(dataHariIni){
-    dataHariIni.petugas.forEach(nama=>{
-        const li = document.createElement("li");
-        li.textContent = nama;
+    dataHariIni.petugas.forEach(n=>{
+        const li=document.createElement("li");
+        li.textContent=n;
         list.appendChild(li);
     });
 }else{
-    list.innerHTML = "<li>Tidak ada jadwal hari ini</li>";
+    list.innerHTML="<li>Tidak ada jadwal hari ini</li>";
 }
 
 function downloadExcel(){
-    const now = new Date();
-    const bulan = now.getMonth();
-    const tahun = now.getFullYear();
+    const now=new Date();
+    const bulan=now.getMonth();
+    const tahun=now.getFullYear();
 
-    const dataBulanIni = schedule.filter(s=>{
-        const d = new Date(s.tanggal);
-        return d.getMonth() === bulan && d.getFullYear() === tahun;
+    const dataBulanIni=schedule.filter(s=>{
+        const d=new Date(s.tanggal);
+        return d.getMonth()===bulan && d.getFullYear()===tahun;
     });
 
-    const namaBulan = now.toLocaleDateString("id-ID",{month:"long"});
+    const namaBulan=now.toLocaleDateString("id-ID",{month:"long"});
 
-    const header = [["Tanggal","Hari","Petugas 1","Petugas 2","Petugas 3","Petugas 4","Petugas 5"]];
-    const data = dataBulanIni.map(s=>[
+    const header=[["Tanggal","Hari","Petugas 1","Petugas 2","Petugas 3","Petugas 4","Petugas 5"]];
+    const data=dataBulanIni.map(s=>[
         s.tanggal,s.hariNama,...s.petugas
     ]);
 
-    const ws = XLSX.utils.aoa_to_sheet(header.concat(data));
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Jadwal");
-    XLSX.writeFile(wb, `Rekap_Piket_${namaBulan}_${tahun}.xlsx`);
+    const ws=XLSX.utils.aoa_to_sheet(header.concat(data));
+    const wb=XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb,ws,"Jadwal");
+    XLSX.writeFile(wb,`Rekap_Piket_${namaBulan}_${tahun}.xlsx`);
 }
 </script>
 
