@@ -3,9 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Jadwal Piket 2026</title>
-
-<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+<title>Sistem Jadwal Piket</title>
 
 <style>
 body{
@@ -14,211 +12,133 @@ body{
     background:url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTdDTXGJIkjphkmC30hMYVpmbZwDdy1XzTH3jFDe16W10jQRXa5mLkwfmLq&s=10') no-repeat center center fixed;
     background-size:cover;
     color:white;
+    overflow:hidden;
 }
 
+/* OVERLAY */
 .overlay{
-    background:linear-gradient(135deg, rgba(0,0,0,0.75), rgba(0,40,0,0.75));
+    background:linear-gradient(135deg, rgba(0,0,0,0.8), rgba(0,50,0,0.8));
     min-height:100vh;
-    padding:60px 20px;
     display:flex;
     flex-direction:column;
+    justify-content:center;
     align-items:center;
-}
-
-.header-dinas{
     text-align:center;
-    margin-bottom:40px;
+    padding:20px;
 }
 
-.header-dinas h1{
-    margin:0;
-    font-size:26px;
+/* HEADER */
+.header h1{
+    font-size:28px;
     letter-spacing:3px;
-    font-weight:700;
+    margin:0;
+    animation:fadeDown 1s ease;
 }
 
-.header-dinas p{
-    margin-top:8px;
-    font-size:14px;
+.header p{
+    margin-top:10px;
+    opacity:0.8;
     letter-spacing:2px;
-    opacity:0.9;
+    animation:fadeDown 1.4s ease;
 }
 
+/* CARD CONTAINER */
+.menu{
+    margin-top:50px;
+    display:flex;
+    gap:25px;
+    flex-wrap:wrap;
+    justify-content:center;
+}
+
+/* CARD BUTTON */
 .card{
-    width:100%;
-    max-width:520px;
-    padding:35px;
-    border-radius:25px;
-    backdrop-filter:blur(18px);
+    width:220px;
+    height:160px;
+    border-radius:20px;
+    backdrop-filter:blur(15px);
     background:rgba(255,255,255,0.12);
     border:1px solid rgba(255,255,255,0.25);
-    box-shadow:0 25px 60px rgba(0,0,0,0.6);
-    text-align:center;
-}
-
-.card h3{
-    margin:0 0 15px 0;
-    font-size:18px;
-    letter-spacing:2px;
-    font-weight:600;
-}
-
-.tanggal{
-    margin-bottom:20px;
-    font-size:14px;
-    opacity:0.9;
-}
-
-ul{
-    list-style:none;
-    padding:0;
-    margin:0 0 25px 0;
-}
-
-li{
-    padding:12px;
-    margin:8px 0;
-    border-radius:14px;
-    background:rgba(255,255,255,0.15);
-    backdrop-filter:blur(8px);
-    font-weight:500;
-    transition:0.3s;
-}
-
-li:hover{
-    background:rgba(255,255,255,0.25);
-    transform:scale(1.02);
-}
-
-/* FLOATING RED DOT DOWNLOAD */
-.floating-download{
-    position:fixed;
-    right:20px;
-    bottom:20px;
-    width:60px;
-    height:60px;
-    border-radius:50%;
-    background:#e53935;
-    border:none;
-    color:white;
-    font-size:26px;
-    cursor:pointer;
-    box-shadow:0 12px 30px rgba(0,0,0,0.6);
     display:flex;
-    align-items:center;
+    flex-direction:column;
     justify-content:center;
-    transition:0.3s;
-    z-index:999;
+    align-items:center;
+    cursor:pointer;
+    transition:0.4s;
+    box-shadow:0 15px 40px rgba(0,0,0,0.5);
+    animation:fadeUp 1.2s ease;
 }
 
-.floating-download:hover{
-    transform:scale(1.12);
-    background:#ff5252;
+.card:hover{
+    transform:translateY(-10px) scale(1.05);
+    background:rgba(255,255,255,0.2);
+}
+
+/* ICON */
+.icon{
+    font-size:40px;
+    margin-bottom:10px;
+}
+
+/* TEXT */
+.card span{
+    font-weight:600;
+    letter-spacing:1px;
+}
+
+/* ANIMATION */
+@keyframes fadeDown{
+    from{opacity:0;transform:translateY(-30px);}
+    to{opacity:1;transform:translateY(0);}
+}
+
+@keyframes fadeUp{
+    from{opacity:0;transform:translateY(40px);}
+    to{opacity:1;transform:translateY(0);}
+}
+
+/* FOOTER */
+.footer{
+    position:absolute;
+    bottom:15px;
+    font-size:12px;
+    opacity:0.6;
 }
 </style>
 </head>
+
 <body>
 
 <div class="overlay">
 
-    <div class="header-dinas">
-        <h1>DINAS PERTANIAN</h1>
-        <p>KABUPATEN INDRAGIRI HILIR</p>
+    <div class="header">
+        <h1>SISTEM JADWAL PIKET</h1>
+        <p>DINAS PERTANIAN INDRAGIRI HILIR</p>
     </div>
 
-    <div class="card">
-        <h3>JADWAL PIKET HARI INI</h3>
-        <div class="tanggal" id="tanggal"></div>
-        <ul id="petugas"></ul>
+    <div class="menu">
+        
+        <div class="card" onclick="goTo('jadwalpiketlaki.html')">
+            <div class="icon">👨</div>
+            <span>Piket Laki-laki</span>
+        </div>
+
+        <div class="card" onclick="goTo('jadwalpiketperempuan.html')">
+            <div class="icon">👩</div>
+            <span>Piket Perempuan</span>
+        </div>
+
+    </div>
+
+    <div class="footer">
+        © 2026 Sistem Internal Dinas
     </div>
 
 </div>
 
-<!-- FLOATING BUTTON -->
-<button class="floating-download" onclick="downloadExcel()" title="Download Excel">
-⬇️
-</button>
-
 <script>
-const pegawai = [
-"Heri Yanto","Andika Subeky","Juhaiman","Abd. Hamid","Taufik",
-"Dwi Apriyanto","Khaidir Saputra","Ari Wibowo","Adi Khairul Anam","Eko Priyono",
-"Arif Rahman","Muhammad Rizky","Andi Suardi","Berry Tri Yoka","Hendriansah",
-"Edi Santoso","Rano","Asliansyah","Burhanuddin","Heri Firman",
-"Deventer Putra P","Zikrullah","Dedy Suryandana","Decky Zulkarnain","Iwan Radiardi",
-"Cecep Setiawan","M. Nur Oktaris","Rudi Guntara","Dico Maicandra","Kadris",
-"Endrio Naldo","Fiki Boys","Reinaldy Alvino","Edi Wibowo","Kaspul Khair",
-"Frenly Wirnawan","Bagus Pratama P","M. Aditia Yulianto","Murdiono",
-"Putra Andini","Safruddin","Jamaluddinsyah","Hasanudin","Reza Fahlevi A",
-"Anugerah Dwi P","Sunhil Mahendra","Maulana Rahman","M. Juraji","Sugeng Pranoto",
-"Feri Ibrahim","Agus Riyanto","Subarjo","Marzuki","Syahrudin",
-"Muhammad Rafai","Dahri Ansori","Abdu Samad","Oktarian Priyatno",
-"Andriansyah","Randi Febriadi","Sarno Budi Santoso","Sigit Santoso"
-];
-
-let schedule=[];
-let indexPegawai=0;
-
-function generateSchedule(){
-    const start=new Date("2026-01-01");
-    const end=new Date("2026-12-31");
-
-    for(let d=new Date(start); d<=end; d.setDate(d.getDate()+1)){
-        if(d.getDay()===0 || d.getDay()===6) continue;
-
-        let petugas=[];
-        for(let i=0;i<5;i++){
-            petugas.push(pegawai[indexPegawai % pegawai.length]);
-            indexPegawai++;
-        }
-
-        schedule.push({
-            tanggal:d.toISOString().split("T")[0],
-            hariNama:d.toLocaleDateString("id-ID",{weekday:"long"}),
-            petugas
-        });
-    }
-}
-generateSchedule();
-
-document.getElementById("tanggal").textContent=
-new Date().toLocaleDateString("id-ID",{weekday:"long",year:"numeric",month:"long",day:"numeric"});
-
-const today=new Date().toISOString().split("T")[0];
-const dataHariIni=schedule.find(s=>s.tanggal===today);
-const list=document.getElementById("petugas");
-
-if(dataHariIni){
-    dataHariIni.petugas.forEach(n=>{
-        const li=document.createElement("li");
-        li.textContent=n;
-        list.appendChild(li);
-    });
-}else{
-    list.innerHTML="<li>Tidak ada jadwal hari ini</li>";
-}
-
-function downloadExcel(){
-    const now=new Date();
-    const bulan=now.getMonth();
-    const tahun=now.getFullYear();
-
-    const dataBulanIni=schedule.filter(s=>{
-        const d=new Date(s.tanggal);
-        return d.getMonth()===bulan && d.getFullYear()===tahun;
-    });
-
-    const namaBulan=now.toLocaleDateString("id-ID",{month:"long"});
-
-    const header=[["Tanggal","Hari","Petugas 1","Petugas 2","Petugas 3","Petugas 4","Petugas 5"]];
-    const data=dataBulanIni.map(s=>[
-        s.tanggal,s.hariNama,...s.petugas
-    ]);
-
-    const ws=XLSX.utils.aoa_to_sheet(header.concat(data));
-    const wb=XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb,ws,"Jadwal");
-    XLSX.writeFile(wb,`Rekap_Piket_${namaBulan}_${tahun}.xlsx`);
+function goTo(page){
+    window.location.href = page;
 }
 </script>
 
