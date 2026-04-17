@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Jadwal Piket Jumat</title>
+<title>Piket Perempuan</title>
 
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
 <style>
-/* (STYLE SAMA PERSIS — GAK DIUBAH) */
+/* UI SAMA */
 body{
     margin:0;
     font-family:'Poppins','Segoe UI',sans-serif;
@@ -24,9 +24,6 @@ body{
     flex-direction:column;
     align-items:center;
 }
-.header-dinas{text-align:center;margin-bottom:40px;}
-.header-dinas h1{margin:0;font-size:26px;letter-spacing:3px;font-weight:700;}
-.header-dinas p{margin-top:8px;font-size:14px;letter-spacing:2px;opacity:0.9;}
 .card{
     width:100%;
     max-width:520px;
@@ -35,14 +32,13 @@ body{
     backdrop-filter:blur(18px);
     background:rgba(255,255,255,0.12);
     border:1px solid rgba(255,255,255,0.25);
-    box-shadow:0 25px 60px rgba(0,0,0,0.6);
     text-align:center;
 }
-.card h3{margin:0 0 15px 0;font-size:18px;letter-spacing:2px;font-weight:600;}
-.tanggal{margin-bottom:20px;font-size:14px;opacity:0.9;}
-ul{list-style:none;padding:0;margin:0 0 25px 0;}
+.tanggal{margin-bottom:20px;}
 li{
-    padding:12px;margin:8px 0;border-radius:14px;
+    padding:12px;
+    margin:8px 0;
+    border-radius:14px;
     background:rgba(255,255,255,0.15);
 }
 .floating-download{
@@ -57,13 +53,8 @@ li{
 <body>
 
 <div class="overlay">
-    <div class="header-dinas">
-        <h1>DINAS PERTANIAN</h1>
-        <p>KABUPATEN INDRAGIRI HILIR</p>
-    </div>
-
     <div class="card">
-        <h3>JADWAL PIKET JUMAT</h3>
+        <h3>JADWAL PIKET PEREMPUAN</h3>
         <div class="tanggal" id="tanggal"></div>
         <ul id="petugas"></ul>
     </div>
@@ -73,66 +64,85 @@ li{
 
 <script>
 
-// DATA PETUGAS (PUNYA KAMU)
-const names = [
-"Haryati Annisa","Yurindra Priska S","Nurhayaty","Rubiyah","Dewi Ratna Sari","Yolanda Sri Rahayu",
-"Sukmayani","Novia Dwi A","Lisa Susanti","Gusti Ayu","Afrinola Mandrasari","Ema Hikmah",
-"Siti Fatimah","Dwi Febri C","Tri Indah R","Yulia Anggraita","Dewi Wardati","Ratih Cristina Dewi","Tina Fitriyani",
-"Khairiah","Misnah","Ayuni Apri Lanika","Sri Suryani","Annisa Angraini","Selvia","Yuliana",
-"Rifa'atul Ridha","Liani","Maya Restia N","Fatimah","Nurpah","Siti Zubaidah",
-"Nita Hayati","Thiara Septina D","Indah Chairunnisa","Yusa Alisa Putri","Riska Wulandari","Nova Yunita",
-"Sarinah","Kurniati Ramayulis","Widuri Novelasari","Sri Wahyuni","Megawati","Saniah",
-"Vera Gustina","Resti Tiaranti","Vanissa Aldi","Rodiana Wirasati","Rosmawati","Sartika Yuliani"
+// DATA ASLI (FIX DARI KAMU)
+const jadwalAwal = [
+{
+tanggal:"2026-04-17",
+petugas:["Sukmayani","Novia Dwi A","Lisa Susanti","Gusti Ayu","Afrinola Mandrasari","Ema Hikmah"]
+},
+{
+tanggal:"2026-04-24",
+petugas:["Siti Fatimah","Dwi Febri C","Tri Indah R","Yulia Anggraita","Dewi Wardati","Ratih Cristina Dewi"]
+},
+{
+tanggal:"2026-05-08",
+petugas:["Khairiah","Misnah","Ayuni Apri Lanika","Sri Suryani","Annisa Angraini","Selvia"]
+},
+{
+tanggal:"2026-05-15",
+petugas:["Rifa'atul Ridha","Liani","Maya Restia N","Fatimah","Nurpah","Siti Zubaidah"]
+},
+{
+tanggal:"2026-05-22",
+petugas:["Nita Hayati","Thiara Septina D","Indah Chairunnisa","Yusa Alisa Putri","Riska Wulandari","Nova Yunita"]
+},
+{
+tanggal:"2026-05-29",
+petugas:["Sarinah","Kurniati Ramayulis","Widuri Novelasari","Sri Wahyuni","Megawati","Saniah"]
+},
+{
+tanggal:"2026-06-05",
+petugas:["Vera Gustina","Resti Tiaranti","Vanissa Aldi","Rodiana Wirasati","Rosmawati","Sartika Yuliani"]
+}
 ];
+
+// ambil semua nama untuk rolling lanjutan
+let semuaNama = [];
+jadwalAwal.forEach(j => semuaNama.push(...j.petugas));
 
 // cari Jumat minggu berjalan
 function getNextFriday(){
     const today = new Date();
-    const day = today.getDay();
-
-    let diff = 5 - day;
+    let diff = 5 - today.getDay();
     if(diff < 0) diff += 7;
 
-    const friday = new Date(today);
+    let friday = new Date(today);
     friday.setDate(today.getDate() + diff);
-
     return friday;
 }
 
-// generate jadwal full tahun
-function generateSchedule(){
-    let schedule=[];
-    let index=0;
+// generate lanjutan setelah data awal
+function generateNextSchedule(){
+    let schedule = [...jadwalAwal];
+    let index = semuaNama.length;
 
-    const start=new Date("2026-01-01");
-    const end=new Date("2026-12-31");
+    let lastDate = new Date(jadwalAwal[jadwalAwal.length-1].tanggal);
 
-    for(let d=new Date(start); d<=end; d.setDate(d.getDate()+1)){
-        if(d.getDay()===5){ // Jumat
+    for(let i=0;i<30;i++){
+        lastDate.setDate(lastDate.getDate()+7);
 
-            let team=[];
-            for(let i=0;i<6;i++){
-                team.push(names[index % names.length]);
-                index++;
-            }
-
-            schedule.push({
-                tanggal:d.toISOString().split("T")[0],
-                petugas:team
-            });
+        let team=[];
+        for(let j=0;j<6;j++){
+            team.push(semuaNama[index % semuaNama.length]);
+            index++;
         }
+
+        schedule.push({
+            tanggal:lastDate.toISOString().split("T")[0],
+            petugas:team
+        });
     }
 
     return schedule;
 }
 
-const schedule = generateSchedule();
-const targetFriday = getNextFriday();
-const targetISO = targetFriday.toISOString().split("T")[0];
+const schedule = generateNextSchedule();
+const target = getNextFriday();
+const targetISO = target.toISOString().split("T")[0];
 
 // tampilkan tanggal
 document.getElementById("tanggal").textContent =
-targetFriday.toLocaleDateString("id-ID",{weekday:"long",year:"numeric",month:"long",day:"numeric"});
+target.toLocaleDateString("id-ID",{weekday:"long",year:"numeric",month:"long",day:"numeric"});
 
 // tampilkan petugas
 const data = schedule.find(s=>s.tanggal===targetISO);
@@ -144,9 +154,11 @@ if(data){
         li.textContent=n;
         list.appendChild(li);
     });
+}else{
+    list.innerHTML="<li>Belum ada jadwal</li>";
 }
 
-// download excel (bulan berjalan)
+// download excel bulan berjalan
 function downloadExcel(){
     const now=new Date();
 
@@ -155,18 +167,14 @@ function downloadExcel(){
         return d.getMonth()===now.getMonth();
     });
 
-    const excelData = dataBulan.map(s=>[
-        s.tanggal, ...s.petugas
-    ]);
-
     const ws=XLSX.utils.aoa_to_sheet([
         ["Tanggal","Petugas 1","Petugas 2","Petugas 3","Petugas 4","Petugas 5","Petugas 6"],
-        ...excelData
+        ...dataBulan.map(s=>[s.tanggal,...s.petugas])
     ]);
 
     const wb=XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb,ws,"Jadwal");
-    XLSX.writeFile(wb,"Jadwal_Piket.xlsx");
+    XLSX.writeFile(wb,"Piket_Perempuan.xlsx");
 }
 
 </script>
