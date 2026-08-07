@@ -3,143 +3,288 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Jadwal Piket 2026</title>
-
+<title>Piket Laki-laki — Dinas Pertanian Indragiri Hilir</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
 <style>
-body{
-    margin:0;
-    font-family:'Poppins','Segoe UI',sans-serif;
-    background:url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTdDTXGJIkjphkmC30hMYVpmbZwDdy1XzTH3jFDe16W10jQRXa5mLkwfmLq&s=10') no-repeat center center fixed;
-    background-size:cover;
-    color:white;
-}
+  :root{
+    --deep-palm:#132B24;
+    --paddy:#2F5D46;
+    --paddy-light:#568068;
+    --harvest:#E3B23C;
+    --clay:#C77B4A;
+    --paper:#F6F1E4;
+    --paper-dim:rgba(246,241,228,0.68);
+    --line:rgba(246,241,228,0.16);
+  }
 
-.overlay{
-    background:linear-gradient(135deg, rgba(0,0,0,0.75), rgba(0,40,0,0.75));
-    min-height:100vh;
-    padding:60px 20px;
+  *{box-sizing:border-box;}
+  html,body{margin:0;min-height:100vh;}
+
+  body{
+    font-family:'Manrope',sans-serif;
+    color:var(--paper);
+    background:
+      radial-gradient(120% 90% at 15% -10%, rgba(227,178,60,0.16), transparent 55%),
+      radial-gradient(100% 80% at 100% 110%, rgba(199,123,74,0.16), transparent 55%),
+      linear-gradient(160deg, var(--deep-palm) 0%, #0E211C 60%, #0A1815 100%);
     display:flex;
     flex-direction:column;
-    align-items:center;
-}
+    min-height:100vh;
+  }
 
-.header-dinas{
-    text-align:center;
-    margin-bottom:40px;
-}
+  .furrows{
+    position:fixed; inset:0; pointer-events:none; opacity:0.05; z-index:0;
+    background-image:repeating-linear-gradient(115deg, var(--paper) 0px, var(--paper) 1px, transparent 1px, transparent 46px);
+  }
 
-.header-dinas h1{
-    margin:0;
-    font-size:26px;
-    letter-spacing:3px;
-    font-weight:700;
-}
+  .topbar{
+    position:relative; z-index:2;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:22px 26px 0;
+  }
 
-.header-dinas p{
-    margin-top:8px;
-    font-size:14px;
-    letter-spacing:2px;
-    opacity:0.9;
-}
+  .back{
+    display:inline-flex; align-items:center; gap:8px;
+    color:var(--paper-dim);
+    text-decoration:none;
+    font-size:13px; font-weight:600; letter-spacing:0.02em;
+    padding:8px 14px 8px 10px;
+    border-radius:999px;
+    border:1px solid var(--line);
+    transition:0.3s;
+  }
+  .back:hover, .back:focus-visible{ color:var(--paper); border-color:rgba(246,241,228,0.35); background:rgba(246,241,228,0.06); }
 
-.card{
-    width:100%;
-    max-width:520px;
-    padding:35px;
-    border-radius:25px;
-    backdrop-filter:blur(18px);
-    background:rgba(255,255,255,0.12);
-    border:1px solid rgba(255,255,255,0.25);
-    box-shadow:0 25px 60px rgba(0,0,0,0.6);
-    text-align:center;
-}
+  .badge{
+    font-size:11px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase;
+    color:var(--harvest);
+    padding:8px 14px;
+    border-radius:999px;
+    border:1px solid rgba(227,178,60,0.35);
+    background:rgba(227,178,60,0.08);
+  }
 
-.card h3{
-    margin:0 0 15px 0;
-    font-size:18px;
-    letter-spacing:2px;
+  main{
+    position:relative; z-index:1;
+    flex:1;
+    display:flex; flex-direction:column; align-items:center;
+    padding:28px 20px 40px;
+  }
+
+  .eyebrow{
+    display:flex; align-items:center; gap:10px;
+    font-size:12px; font-weight:700; letter-spacing:0.22em; text-transform:uppercase;
+    color:var(--harvest);
+    opacity:0; animation:riseIn 0.7s ease 0.05s forwards;
+  }
+  .eyebrow::before, .eyebrow::after{ content:""; width:22px; height:1px; background:var(--harvest); opacity:0.6; }
+
+  h1{
+    font-family:'Fraunces',serif;
+    font-optical-sizing:auto;
     font-weight:600;
-}
+    font-size:clamp(34px, 6vw, 54px);
+    line-height:1.03;
+    letter-spacing:-0.01em;
+    margin:16px 0 8px;
+    text-align:center;
+    opacity:0; animation:riseIn 0.8s ease 0.15s forwards;
+  }
+  h1 em{ font-style:italic; font-weight:500; color:var(--harvest); }
 
-.tanggal{
+  .subtitle{
+    font-size:14px; color:var(--paper-dim);
+    text-align:center; max-width:420px; margin:0 0 26px;
+    opacity:0; animation:riseIn 0.8s ease 0.25s forwards;
+  }
+
+  .datechip{
+    display:inline-flex; align-items:center; gap:9px;
+    padding:9px 18px; border-radius:999px;
+    background:rgba(246,241,228,0.06); border:1px solid var(--line);
+    font-size:13px; font-weight:600;
+    margin-bottom:34px;
+    opacity:0; animation:riseIn 0.8s ease 0.35s forwards;
+  }
+  .datechip .dot{ width:7px; height:7px; border-radius:50%; background:var(--harvest); box-shadow:0 0 0 4px rgba(227,178,60,0.18); }
+
+  /* ROSTER CARD */
+  .card{
+    width:100%; max-width:520px;
+    padding:30px 28px 26px;
+    border-radius:22px;
+    background:rgba(246,241,228,0.055);
+    border:1px solid var(--line);
+    backdrop-filter:blur(18px);
+    opacity:0; animation:riseIn 0.8s ease 0.4s forwards;
+  }
+
+  .card-head{
+    display:flex; align-items:baseline; justify-content:space-between;
     margin-bottom:20px;
-    font-size:14px;
-    opacity:0.9;
-}
+    border-bottom:1px solid var(--line);
+    padding-bottom:16px;
+  }
 
-ul{
-    list-style:none;
-    padding:0;
-    margin:0 0 25px 0;
-}
+  .card-head h2{
+    font-family:'Fraunces',serif;
+    font-weight:500; font-size:19px; margin:0;
+    letter-spacing:-0.01em;
+  }
 
-li{
-    padding:12px;
-    margin:8px 0;
+  .card-head span{
+    font-size:11px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase;
+    color:var(--harvest);
+  }
+
+  ul{ list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:9px; }
+
+  li{
+    display:flex; align-items:center; gap:14px;
+    padding:13px 16px;
     border-radius:14px;
-    background:rgba(255,255,255,0.15);
-    backdrop-filter:blur(8px);
-    font-weight:500;
+    background:rgba(246,241,228,0.05);
+    border:1px solid transparent;
+    font-weight:600; font-size:14.5px;
     transition:0.3s;
-}
+  }
+  li:hover{ background:rgba(246,241,228,0.1); border-color:var(--line); transform:translateX(2px); }
 
-li:hover{
-    background:rgba(255,255,255,0.25);
-    transform:scale(1.02);
-}
+  li .num{
+    font-family:'Fraunces',serif;
+    font-weight:500; font-size:13px;
+    color:var(--harvest);
+    min-width:22px;
+  }
 
-/* FLOATING RED DOT DOWNLOAD */
-.floating-download{
-    position:fixed;
-    right:20px;
-    bottom:20px;
-    width:60px;
-    height:60px;
-    border-radius:50%;
-    background:#e53935;
-    border:none;
-    color:white;
-    font-size:26px;
+  /* FLOATING ACTIONS */
+  .fab-stack{
+    position:fixed; right:22px; bottom:22px;
+    display:flex; flex-direction:column; gap:12px;
+    z-index:50;
+  }
+
+  .fab{
+    width:52px; height:52px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    border:1px solid var(--line);
+    background:rgba(19,43,36,0.85);
+    backdrop-filter:blur(10px);
+    color:var(--paper);
     cursor:pointer;
-    box-shadow:0 12px 30px rgba(0,0,0,0.6);
-    display:flex;
-    align-items:center;
-    justify-content:center;
+    box-shadow:0 14px 30px rgba(0,0,0,0.45);
     transition:0.3s;
-    z-index:999;
-}
+  }
+  .fab:hover, .fab:focus-visible{ transform:translateY(-3px); border-color:var(--harvest); color:var(--harvest); }
+  .fab svg{ width:21px; height:21px; }
 
-.floating-download:hover{
-    transform:scale(1.12);
-    background:#ff5252;
-}
+  .fab.playing{ color:var(--harvest); border-color:var(--harvest); }
+  .fab.playing .bar{ animation:eq 0.9s ease-in-out infinite; }
+  .fab .bar:nth-child(2){ animation-delay:0.15s; }
+  .fab .bar:nth-child(3){ animation-delay:0.3s; }
+
+  @keyframes eq{
+    0%,100%{ transform:scaleY(0.4); }
+    50%{ transform:scaleY(1); }
+  }
+
+  .field{
+    position:relative; z-index:1;
+    height:56px;
+    display:flex; align-items:flex-end; justify-content:center;
+    gap:clamp(10px, 2.4vw, 26px);
+  }
+  .field::before{
+    content:""; position:absolute; left:0; right:0; bottom:14px; height:1px;
+    background:linear-gradient(90deg, transparent, var(--line) 20%, var(--line) 80%, transparent);
+  }
+  .sprout{
+    width:2px; height:20px;
+    background:linear-gradient(to top, var(--paddy), var(--paddy-light));
+    border-radius:2px 2px 0 0;
+    transform-origin:bottom center;
+    animation:sway 4.5s ease-in-out infinite;
+  }
+  .sprout:nth-child(odd){ height:15px; animation-duration:5.2s; }
+  .sprout:nth-child(3n){ height:24px; animation-duration:3.8s; background:linear-gradient(to top, var(--clay), var(--harvest)); }
+  .sprout:nth-child(2){ animation-delay:0.3s; }
+  .sprout:nth-child(4){ animation-delay:0.9s; }
+  .sprout:nth-child(5){ animation-delay:0.15s; }
+  .sprout:nth-child(6){ animation-delay:0.6s; }
+  .sprout:nth-child(7){ animation-delay:1.1s; }
+
+  footer{
+    position:relative; z-index:1; text-align:center;
+    font-size:11px; letter-spacing:0.04em; color:rgba(246,241,228,0.4);
+    padding:8px 0 20px;
+  }
+
+  @keyframes riseIn{ from{opacity:0; transform:translateY(16px);} to{opacity:1; transform:translateY(0);} }
+  @keyframes sway{ 0%,100%{ transform:rotate(-4deg); } 50%{ transform:rotate(4deg); } }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important; }
+  }
 </style>
 </head>
 <body>
 
-<div class="overlay">
+<div class="furrows" aria-hidden="true"></div>
 
-    <div class="header-dinas">
-        <h1>DINAS PERTANIAN</h1>
-        <p>KABUPATEN INDRAGIRI HILIR</p>
-    </div>
-
-    <div class="card">
-        <h3>JADWAL PIKET HARI INI</h3>
-        <div class="tanggal" id="tanggal"></div>
-        <ul id="petugas"></ul>
-    </div>
-
+<div class="topbar">
+  <a class="back" href="index.html">← Kembali</a>
+  <span class="badge">Kelompok A</span>
 </div>
 
-<!-- FLOATING BUTTON -->
-<button class="floating-download" onclick="downloadExcel()" title="Download Excel">
-⬇️
-</button>
+<main>
+  <div class="eyebrow">Kabupaten Indragiri Hilir</div>
+  <h1>Piket <em>Laki-laki</em></h1>
+  <p class="subtitle">Rotasi harian otomatis, hari kerja Senin–Jumat, tahun 2026.</p>
+
+  <div class="datechip">
+    <span class="dot" aria-hidden="true"></span>
+    <span id="tanggal">Memuat tanggal…</span>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <h2>Petugas hari ini</h2>
+      <span id="hariLabel"></span>
+    </div>
+    <ul id="petugas"></ul>
+  </div>
+</main>
+
+<div class="field" aria-hidden="true">
+  <div class="sprout"></div><div class="sprout"></div><div class="sprout"></div>
+  <div class="sprout"></div><div class="sprout"></div><div class="sprout"></div>
+  <div class="sprout"></div><div class="sprout"></div><div class="sprout"></div>
+</div>
+
+<footer>© 2026 Sistem Internal · Dinas Pertanian Indragiri Hilir</footer>
+
+<div class="fab-stack">
+  <button class="fab" id="musicBtn" title="Putar musik instrumental" aria-pressed="false">
+    <svg viewBox="0 0 24 24" fill="currentColor" id="musicIcon">
+      <path d="M9 18V5l12-2v13"/>
+      <circle cx="6" cy="18" r="3"/>
+      <circle cx="18" cy="16" r="3"/>
+    </svg>
+  </button>
+  <button class="fab" onclick="downloadExcel()" title="Unduh rekap Excel bulan ini">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+      <path d="M12 3v12m0 0l-4-4m4 4l4-4"/>
+      <path d="M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"/>
+    </svg>
+  </button>
+</div>
 
 <script>
+/* ============ JADWAL ============ */
 const pegawai = [
 "Heri Yanto","Andika Subeky","Juhaiman","Abd. Hamid","Taufik",
 "Dwi Apriyanto","Khaidir Saputra","Ari Wibowo","Adi Khairul Anam","Eko Priyono",
@@ -156,70 +301,211 @@ const pegawai = [
 "Andriansyah","Randi Febriadi","Sarno Budi Santoso","Sigit Santoso"
 ];
 
-let schedule=[];
-let indexPegawai=0;
+let schedule = [];
+let indexPegawai = 0;
 
 function generateSchedule(){
-    const start=new Date("2026-01-01");
-    const end=new Date("2026-12-31");
-
-    for(let d=new Date(start); d<=end; d.setDate(d.getDate()+1)){
-        if(d.getDay()===0 || d.getDay()===6) continue;
-
-        let petugas=[];
-        for(let i=0;i<5;i++){
-            petugas.push(pegawai[indexPegawai % pegawai.length]);
-            indexPegawai++;
-        }
-
-        schedule.push({
-            tanggal:d.toISOString().split("T")[0],
-            hariNama:d.toLocaleDateString("id-ID",{weekday:"long"}),
-            petugas
-        });
+  const start = new Date("2026-01-01");
+  const end = new Date("2026-12-31");
+  for(let d = new Date(start); d <= end; d.setDate(d.getDate()+1)){
+    if(d.getDay() === 0 || d.getDay() === 6) continue;
+    let petugas = [];
+    for(let i=0;i<5;i++){
+      petugas.push(pegawai[indexPegawai % pegawai.length]);
+      indexPegawai++;
     }
+    schedule.push({
+      tanggal: d.toISOString().split("T")[0],
+      hariNama: d.toLocaleDateString("id-ID",{weekday:"long"}),
+      petugas
+    });
+  }
 }
 generateSchedule();
 
-document.getElementById("tanggal").textContent=
-new Date().toLocaleDateString("id-ID",{weekday:"long",year:"numeric",month:"long",day:"numeric"});
+document.getElementById("tanggal").textContent =
+  new Date().toLocaleDateString("id-ID",{weekday:"long",year:"numeric",month:"long",day:"numeric"});
 
-const today=new Date().toISOString().split("T")[0];
-const dataHariIni=schedule.find(s=>s.tanggal===today);
-const list=document.getElementById("petugas");
+const today = new Date().toISOString().split("T")[0];
+const dataHariIni = schedule.find(s => s.tanggal === today);
+const list = document.getElementById("petugas");
+const hariLabel = document.getElementById("hariLabel");
 
 if(dataHariIni){
-    dataHariIni.petugas.forEach(n=>{
-        const li=document.createElement("li");
-        li.textContent=n;
-        list.appendChild(li);
-    });
-}else{
-    list.innerHTML="<li>Tidak ada jadwal hari ini</li>";
+  hariLabel.textContent = dataHariIni.hariNama;
+  dataHariIni.petugas.forEach((n,i)=>{
+    const li = document.createElement("li");
+    li.innerHTML = `<span class="num">${String(i+1).padStart(2,'0')}</span><span>${n}</span>`;
+    list.appendChild(li);
+  });
+} else {
+  hariLabel.textContent = "Libur";
+  list.innerHTML = "<li><span>Tidak ada jadwal piket hari ini</span></li>";
 }
 
 function downloadExcel(){
-    const now=new Date();
-    const bulan=now.getMonth();
-    const tahun=now.getFullYear();
-
-    const dataBulanIni=schedule.filter(s=>{
-        const d=new Date(s.tanggal);
-        return d.getMonth()===bulan && d.getFullYear()===tahun;
-    });
-
-    const namaBulan=now.toLocaleDateString("id-ID",{month:"long"});
-
-    const header=[["Tanggal","Hari","Petugas 1","Petugas 2","Petugas 3","Petugas 4","Petugas 5"]];
-    const data=dataBulanIni.map(s=>[
-        s.tanggal,s.hariNama,...s.petugas
-    ]);
-
-    const ws=XLSX.utils.aoa_to_sheet(header.concat(data));
-    const wb=XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb,ws,"Jadwal");
-    XLSX.writeFile(wb,`Rekap_Piket_${namaBulan}_${tahun}.xlsx`);
+  const now = new Date();
+  const bulan = now.getMonth();
+  const tahun = now.getFullYear();
+  const dataBulanIni = schedule.filter(s=>{
+    const d = new Date(s.tanggal);
+    return d.getMonth() === bulan && d.getFullYear() === tahun;
+  });
+  const namaBulan = now.toLocaleDateString("id-ID",{month:"long"});
+  const header = [["Tanggal","Hari","Petugas 1","Petugas 2","Petugas 3","Petugas 4","Petugas 5"]];
+  const data = dataBulanIni.map(s => [s.tanggal, s.hariNama, ...s.petugas]);
+  const ws = XLSX.utils.aoa_to_sheet(header.concat(data));
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Jadwal");
+  XLSX.writeFile(wb, `Rekap_Piket_LakiLaki_${namaBulan}_${tahun}.xlsx`);
 }
+
+/* ============ MUSIK AMBIEN — SAX SMOOTH JAZZ ORISINAL ============
+   Komposisi digenerate langsung di browser (Web Audio API), bukan rekaman
+   berhak cipta. Terinspirasi nuansa smooth jazz, dimainkan prosedural. */
+let actx = null, masterGain, delayNode, leadFilter, running = false, schedulerId = null;
+const scaleBbMajorPent = [233.08, 261.63, 293.66, 349.23, 392.00, 466.16, 523.25, 587.33]; // Bb pentatonic-ish
+const chordTones = [
+  [130.81, 155.56, 196.00], // Cm7-ish
+  [174.61, 220.00, 261.63], // F7-ish
+  [116.54, 146.83, 174.61], // Bbmaj7-ish
+  [155.56, 196.00, 233.08]  // Ebmaj7-ish
+];
+let chordIdx = 0, padOsc = [];
+
+function initAudio(){
+  actx = new (window.AudioContext || window.webkitAudioContext)();
+  masterGain = actx.createGain();
+  masterGain.gain.value = 0.0001;
+  masterGain.gain.linearRampToValueAtTime(0.22, actx.currentTime + 1.5);
+
+  delayNode = actx.createDelay();
+  delayNode.delayTime.value = 0.34;
+  const feedback = actx.createGain();
+  feedback.gain.value = 0.28;
+  const delayFilter = actx.createBiquadFilter();
+  delayFilter.type = "lowpass";
+  delayFilter.frequency.value = 2200;
+
+  delayNode.connect(feedback);
+  feedback.connect(delayFilter);
+  delayFilter.connect(delayNode);
+  delayNode.connect(masterGain);
+
+  leadFilter = actx.createBiquadFilter();
+  leadFilter.type = "lowpass";
+  leadFilter.frequency.value = 1400;
+  leadFilter.Q.value = 0.7;
+  leadFilter.connect(masterGain);
+  leadFilter.connect(delayNode);
+
+  masterGain.connect(actx.destination);
+
+  startPad();
+  scheduleLead();
+}
+
+function startPad(){
+  stopPad();
+  const chord = chordTones[chordIdx % chordTones.length];
+  chord.forEach(freq=>{
+    const osc = actx.createOscillator();
+    osc.type = "triangle";
+    osc.frequency.value = freq;
+    const g = actx.createGain();
+    g.gain.value = 0;
+    g.gain.linearRampToValueAtTime(0.05, actx.currentTime + 2);
+    osc.connect(g);
+    g.connect(masterGain);
+    osc.start();
+    padOsc.push({osc, g});
+  });
+  chordIdx++;
+  if(running) setTimeout(startPad, 6000);
+}
+
+function stopPad(){
+  padOsc.forEach(({osc,g})=>{
+    try{
+      g.gain.linearRampToValueAtTime(0, actx.currentTime + 1);
+      osc.stop(actx.currentTime + 1.1);
+    }catch(e){}
+  });
+  padOsc = [];
+}
+
+function playLeadNote(freq, dur){
+  const osc = actx.createOscillator();
+  osc.type = "sawtooth";
+  osc.frequency.value = freq;
+
+  const vibrato = actx.createOscillator();
+  vibrato.frequency.value = 5.2;
+  const vibratoGain = actx.createGain();
+  vibratoGain.gain.value = 4;
+  vibrato.connect(vibratoGain);
+  vibratoGain.connect(osc.frequency);
+  vibrato.start();
+  vibrato.stop(actx.currentTime + dur + 0.2);
+
+  const g = actx.createGain();
+  const t = actx.currentTime;
+  g.gain.setValueAtTime(0, t);
+  g.gain.linearRampToValueAtTime(0.16, t + 0.08);
+  g.gain.linearRampToValueAtTime(0.1, t + dur*0.6);
+  g.gain.linearRampToValueAtTime(0, t + dur);
+
+  osc.connect(leadFilter);
+  osc.connect(g);
+  g.connect(masterGain);
+
+  osc.start(t);
+  osc.stop(t + dur + 0.1);
+}
+
+function scheduleLead(){
+  if(!running) return;
+  if(Math.random() > 0.22){
+    const note = scaleBbMajorPent[Math.floor(Math.random()*scaleBbMajorPent.length)];
+    const dur = 0.35 + Math.random()*0.5;
+    playLeadNote(note, dur);
+  }
+  const next = 380 + Math.random()*340;
+  schedulerId = setTimeout(scheduleLead, next);
+}
+
+function toggleMusic(){
+  const btn = document.getElementById("musicBtn");
+  if(!running){
+    if(!actx) initAudio(); else actx.resume();
+    running = true;
+    scheduleLead();
+    btn.classList.add("playing");
+    btn.setAttribute("aria-pressed","true");
+    btn.title = "Jeda musik";
+  } else {
+    running = false;
+    clearTimeout(schedulerId);
+    if(masterGain) masterGain.gain.linearRampToValueAtTime(0.0001, actx.currentTime + 0.8);
+    stopPad();
+    btn.classList.remove("playing");
+    btn.setAttribute("aria-pressed","false");
+    btn.title = "Putar musik instrumental";
+  }
+}
+
+document.getElementById("musicBtn").addEventListener("click", toggleMusic);
+
+/* Coba putar otomatis saat halaman dibuka — browser umumnya akan
+   memblokirnya sampai ada interaksi pengguna pertama, jadi ini juga
+   dipasang sebagai fallback pada klik/tap pertama di halaman. */
+window.addEventListener("load", () => {
+  toggleMusic();
+});
+document.body.addEventListener("click", function primeAudio(){
+  if(actx && actx.state === "suspended") actx.resume();
+  document.body.removeEventListener("click", primeAudio);
+}, { once:true });
 </script>
 
 </body>
