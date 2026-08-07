@@ -3,143 +3,389 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sistem Jadwal Piket</title>
+<title>Jadwal Piket — Dinas Pertanian Indragiri Hilir</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
-body{
-    margin:0;
-    font-family:'Poppins','Segoe UI',sans-serif;
-    background:url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTdDTXGJIkjphkmC30hMYVpmbZwDdy1XzTH3jFDe16W10jQRXa5mLkwfmLq&s=10') no-repeat center center fixed;
-    background-size:cover;
-    color:white;
-    overflow:hidden;
-}
+  :root{
+    --deep-palm:#132B24;
+    --paddy:#2F5D46;
+    --paddy-light:#568068;
+    --harvest:#E3B23C;
+    --clay:#C77B4A;
+    --paper:#F6F1E4;
+    --paper-dim:rgba(246,241,228,0.68);
+    --line:rgba(246,241,228,0.16);
+  }
 
-/* OVERLAY */
-.overlay{
-    background:linear-gradient(135deg, rgba(0,0,0,0.8), rgba(0,50,0,0.8));
+  *{box-sizing:border-box;}
+
+  html,body{
+    margin:0;
     min-height:100vh;
+  }
+
+  body{
+    font-family:'Manrope',sans-serif;
+    color:var(--paper);
+    background:
+      radial-gradient(120% 90% at 15% -10%, rgba(227,178,60,0.16), transparent 55%),
+      radial-gradient(100% 80% at 100% 110%, rgba(199,123,74,0.16), transparent 55%),
+      linear-gradient(160deg, var(--deep-palm) 0%, #0E211C 60%, #0A1815 100%);
     display:flex;
     flex-direction:column;
-    justify-content:center;
-    align-items:center;
-    text-align:center;
-    padding:20px;
-}
+    min-height:100vh;
+  }
 
-/* HEADER */
-.header h1{
-    font-size:28px;
-    letter-spacing:3px;
-    margin:0;
-    animation:fadeDown 1s ease;
-}
+  /* ambient texture: soft diagonal furrow lines, evokes cultivated field rows */
+  .furrows{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    opacity:0.05;
+    background-image:repeating-linear-gradient(
+      115deg,
+      var(--paper) 0px,
+      var(--paper) 1px,
+      transparent 1px,
+      transparent 46px
+    );
+    z-index:0;
+  }
 
-.header p{
-    margin-top:10px;
-    opacity:0.8;
-    letter-spacing:2px;
-    animation:fadeDown 1.4s ease;
-}
-
-/* CARD CONTAINER */
-.menu{
-    margin-top:50px;
+  main{
+    position:relative;
+    z-index:1;
+    flex:1;
     display:flex;
-    gap:25px;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    padding:56px 24px 40px;
+  }
+
+  /* HEADER */
+  .eyebrow{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:0.22em;
+    text-transform:uppercase;
+    color:var(--harvest);
+    opacity:0;
+    animation:riseIn 0.7s ease 0.05s forwards;
+  }
+
+  .eyebrow::before,
+  .eyebrow::after{
+    content:"";
+    width:22px;
+    height:1px;
+    background:var(--harvest);
+    opacity:0.6;
+  }
+
+  h1{
+    font-family:'Fraunces',serif;
+    font-optical-sizing:auto;
+    font-weight:600;
+    font-size:clamp(38px, 7vw, 68px);
+    line-height:1.02;
+    letter-spacing:-0.01em;
+    margin:18px 0 10px;
+    text-align:center;
+    opacity:0;
+    animation:riseIn 0.8s ease 0.15s forwards;
+  }
+
+  h1 em{
+    font-style:italic;
+    font-weight:500;
+    color:var(--harvest);
+  }
+
+  .subtitle{
+    font-size:15px;
+    color:var(--paper-dim);
+    letter-spacing:0.02em;
+    text-align:center;
+    max-width:440px;
+    margin:0 0 30px;
+    opacity:0;
+    animation:riseIn 0.8s ease 0.25s forwards;
+  }
+
+  /* LIVE DATE CHIP */
+  .datechip{
+    display:inline-flex;
+    align-items:center;
+    gap:9px;
+    padding:9px 18px;
+    border-radius:999px;
+    background:rgba(246,241,228,0.06);
+    border:1px solid var(--line);
+    font-size:13px;
+    font-weight:600;
+    letter-spacing:0.02em;
+    margin-bottom:52px;
+    opacity:0;
+    animation:riseIn 0.8s ease 0.35s forwards;
+  }
+
+  .datechip .dot{
+    width:7px;
+    height:7px;
+    border-radius:50%;
+    background:var(--harvest);
+    box-shadow:0 0 0 4px rgba(227,178,60,0.18);
+  }
+
+  /* CARD GRID */
+  .menu{
+    display:flex;
+    gap:22px;
     flex-wrap:wrap;
     justify-content:center;
-}
+    width:100%;
+    max-width:620px;
+  }
 
-/* CARD BUTTON */
-.card{
-    width:220px;
-    height:160px;
-    border-radius:20px;
-    backdrop-filter:blur(15px);
-    background:rgba(255,255,255,0.12);
-    border:1px solid rgba(255,255,255,0.25);
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
+  .card{
+    position:relative;
+    flex:1 1 250px;
+    min-width:230px;
+    padding:34px 26px 28px;
+    border-radius:22px;
+    background:rgba(246,241,228,0.055);
+    border:1px solid var(--line);
+    backdrop-filter:blur(18px);
     cursor:pointer;
-    transition:0.4s;
-    box-shadow:0 15px 40px rgba(0,0,0,0.5);
-    animation:fadeUp 1.2s ease;
-}
+    text-align:left;
+    overflow:hidden;
+    transition:transform 0.45s cubic-bezier(.2,.8,.2,1), border-color 0.45s, background 0.45s;
+    opacity:0;
+    animation:riseIn 0.8s ease forwards;
+  }
 
-.card:hover{
-    transform:translateY(-10px) scale(1.05);
-    background:rgba(255,255,255,0.2);
-}
+  .card:nth-of-type(1){ animation-delay:0.45s; }
+  .card:nth-of-type(2){ animation-delay:0.55s; }
 
-/* ICON */
-.icon{
-    font-size:40px;
-    margin-bottom:10px;
-}
-
-/* TEXT */
-.card span{
-    font-weight:600;
-    letter-spacing:1px;
-}
-
-/* ANIMATION */
-@keyframes fadeDown{
-    from{opacity:0;transform:translateY(-30px);}
-    to{opacity:1;transform:translateY(0);}
-}
-
-@keyframes fadeUp{
-    from{opacity:0;transform:translateY(40px);}
-    to{opacity:1;transform:translateY(0);}
-}
-
-/* FOOTER */
-.footer{
+  .card::before{
+    content:"";
     position:absolute;
-    bottom:15px;
-    font-size:12px;
-    opacity:0.6;
-}
+    top:0; left:0; right:0;
+    height:3px;
+    background:var(--accent, var(--harvest));
+    transform:scaleX(0.18);
+    transform-origin:left;
+    transition:transform 0.5s ease;
+  }
+
+  .card:hover,
+  .card:focus-visible{
+    transform:translateY(-6px);
+    background:rgba(246,241,228,0.09);
+    border-color:rgba(246,241,228,0.32);
+  }
+
+  .card:hover::before,
+  .card:focus-visible::before{
+    transform:scaleX(1);
+  }
+
+  .card:focus-visible{
+    outline:2px solid var(--harvest);
+    outline-offset:3px;
+  }
+
+  .card .tag{
+    display:inline-block;
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--accent, var(--harvest));
+    margin-bottom:22px;
+  }
+
+  .card .icon{
+    width:44px;
+    height:44px;
+    margin-bottom:6px;
+    color:var(--accent, var(--harvest));
+  }
+
+  .card h2{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:23px;
+    margin:6px 0 6px;
+    letter-spacing:-0.01em;
+  }
+
+  .card p{
+    margin:0;
+    font-size:13px;
+    color:var(--paper-dim);
+    line-height:1.5;
+  }
+
+  .card .arrow{
+    position:absolute;
+    right:24px;
+    bottom:24px;
+    font-size:18px;
+    color:var(--paper-dim);
+    transition:transform 0.35s ease, color 0.35s ease;
+  }
+
+  .card:hover .arrow{
+    transform:translateX(4px);
+    color:var(--paper);
+  }
+
+  .card--laki{ --accent:var(--harvest); }
+  .card--perempuan{ --accent:var(--clay); }
+
+  /* SIGNATURE: field-row footer, sprouts along a horizon line */
+  .field{
+    position:relative;
+    z-index:1;
+    height:64px;
+    display:flex;
+    align-items:flex-end;
+    justify-content:center;
+    gap:clamp(10px, 2.4vw, 26px);
+    padding-bottom:0;
+  }
+
+  .field::before{
+    content:"";
+    position:absolute;
+    left:0; right:0; bottom:14px;
+    height:1px;
+    background:linear-gradient(90deg, transparent, var(--line) 20%, var(--line) 80%, transparent);
+  }
+
+  .sprout{
+    width:2px;
+    height:22px;
+    background:linear-gradient(to top, var(--paddy), var(--paddy-light));
+    border-radius:2px 2px 0 0;
+    transform-origin:bottom center;
+    animation:sway 4.5s ease-in-out infinite;
+  }
+
+  .sprout:nth-child(odd){ height:16px; animation-duration:5.2s; }
+  .sprout:nth-child(3n){ height:27px; animation-duration:3.8s; background:linear-gradient(to top, var(--clay), var(--harvest)); }
+  .sprout:nth-child(2){ animation-delay:0.3s; }
+  .sprout:nth-child(4){ animation-delay:0.9s; }
+  .sprout:nth-child(5){ animation-delay:0.15s; }
+  .sprout:nth-child(6){ animation-delay:0.6s; }
+  .sprout:nth-child(7){ animation-delay:1.1s; }
+
+  footer{
+    position:relative;
+    z-index:1;
+    text-align:center;
+    font-size:11px;
+    letter-spacing:0.04em;
+    color:rgba(246,241,228,0.4);
+    padding:10px 0 20px;
+  }
+
+  @keyframes riseIn{
+    from{opacity:0; transform:translateY(16px);}
+    to{opacity:1; transform:translateY(0);}
+  }
+
+  @keyframes sway{
+    0%,100%{ transform:rotate(-4deg); }
+    50%{ transform:rotate(4deg); }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important; }
+  }
+
+  @media (max-width:480px){
+    .menu{ flex-direction:column; }
+    .card{ flex:1 1 auto; }
+  }
 </style>
 </head>
 
 <body>
 
-<div class="overlay">
+<div class="furrows" aria-hidden="true"></div>
 
-    <div class="header">
-        <h1>SISTEM JADWAL PIKET</h1>
-        <p>DINAS PERTANIAN INDRAGIRI HILIR</p>
+<main>
+  <div class="eyebrow">Kabupaten Indragiri Hilir</div>
+  <h1>Jadwal <em>Piket</em></h1>
+  <p class="subtitle">Sistem penjadwalan piket internal Dinas Pertanian — pilih daftar sesuai kelompok tugas.</p>
+
+  <div class="datechip">
+    <span class="dot" aria-hidden="true"></span>
+    <span id="liveDate">Memuat tanggal…</span>
+  </div>
+
+  <nav class="menu">
+    <div class="card card--laki" role="button" tabindex="0" onclick="goTo('jadwalpiketlaki.html')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();goTo('jadwalpiketlaki.html')}">
+      <span class="tag">Kelompok A</span>
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <circle cx="12" cy="7.5" r="3.4"/>
+        <path d="M5 21c0-4.2 3.13-7 7-7s7 2.8 7 7"/>
+      </svg>
+      <h2>Piket Laki-laki</h2>
+      <p>Daftar dan rotasi jadwal piket untuk staf laki-laki.</p>
+      <span class="arrow" aria-hidden="true">→</span>
     </div>
 
-    <div class="menu">
-        
-        <div class="card" onclick="goTo('jadwalpiketlaki.html')">
-            <div class="icon">👨</div>
-            <span>Piket Laki-laki</span>
-        </div>
-
-        <div class="card" onclick="goTo('jadwalpiketperempuan.html')">
-            <div class="icon">👩</div>
-            <span>Piket Perempuan</span>
-        </div>
-
+    <div class="card card--perempuan" role="button" tabindex="0" onclick="goTo('jadwalpiketperempuan.html')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();goTo('jadwalpiketperempuan.html')}">
+      <span class="tag">Kelompok B</span>
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <circle cx="12" cy="7.5" r="3.4"/>
+        <path d="M5 21c0-4.2 3.13-7 7-7s7 2.8 7 7"/>
+      </svg>
+      <h2>Piket Perempuan</h2>
+      <p>Daftar dan rotasi jadwal piket untuk staf perempuan.</p>
+      <span class="arrow" aria-hidden="true">→</span>
     </div>
+  </nav>
+</main>
 
-    <div class="footer">
-        © 2026 Sistem Internal Dinas
-    </div>
-
+<div class="field" aria-hidden="true">
+  <div class="sprout"></div>
+  <div class="sprout"></div>
+  <div class="sprout"></div>
+  <div class="sprout"></div>
+  <div class="sprout"></div>
+  <div class="sprout"></div>
+  <div class="sprout"></div>
+  <div class="sprout"></div>
+  <div class="sprout"></div>
 </div>
+
+<footer>© 2026 Sistem Internal · Dinas Pertanian Indragiri Hilir</footer>
 
 <script>
 function goTo(page){
-    window.location.href = page;
+  window.location.href = page;
 }
+
+function updateDate(){
+  const now = new Date();
+  const opts = { weekday:'long', day:'numeric', month:'long', year:'numeric' };
+  const dateStr = now.toLocaleDateString('id-ID', opts);
+  const timeStr = now.toLocaleTimeString('id-ID', { hour:'2-digit', minute:'2-digit' });
+  document.getElementById('liveDate').textContent = dateStr + ' · ' + timeStr;
+}
+updateDate();
+setInterval(updateDate, 1000 * 30);
 </script>
 
 </body>
