@@ -274,6 +274,9 @@
 
 <footer>© 2026 Sistem Internal · Dinas Pertanian Indragiri Hilir</footer>
 
+<!-- GANTI NAMA FILE DI SINI kalau mau pakai lagu lain (taruh di folder yang sama) -->
+<audio id="bgMusic" src="musik-piket.mp3" loop preload="auto"></audio>
+
 <div class="fab-stack">
   <button class="fab" id="musicBtn" title="Putar musik instrumental" aria-pressed="false">
     <svg viewBox="0 0 24 24" fill="currentColor">
@@ -397,144 +400,40 @@ function downloadExcel(){
   XLSX.writeFile(wb, "Piket_Perempuan.xlsx");
 }
 
-/* ============ MUSIK AMBIEN — SAX SMOOTH JAZZ ORISINAL ============
-   Digenerate langsung di browser (Web Audio API), bukan rekaman berhak cipta. */
-let actx = null, masterGain, delayNode, leadFilter, running = false, schedulerId = null;
-const scaleBbMajorPent = [233.08, 261.63, 293.66, 349.23, 392.00, 466.16, 523.25, 587.33];
-const chordTones = [
-  [130.81, 155.56, 196.00],
-  [174.61, 220.00, 261.63],
-  [116.54, 146.83, 174.61],
-  [155.56, 196.00, 233.08]
-];
-let chordIdx = 0, padOsc = [];
+/* ============ MUSIK LATAR ============
+   Ambil file dari elemen <audio id="bgMusic"> di atas.
+   Ganti nama file di atribut src="..." kalau mau pakai lagu lain —
+   taruh file musiknya satu folder dengan file HTML ini. */
+const bgMusic = document.getElementById("bgMusic");
+const musicBtn = document.getElementById("musicBtn");
 
-function initAudio(){
-  actx = new (window.AudioContext || window.webkitAudioContext)();
-  masterGain = actx.createGain();
-  masterGain.gain.value = 0.0001;
-  masterGain.gain.linearRampToValueAtTime(0.22, actx.currentTime + 1.5);
-
-  delayNode = actx.createDelay();
-  delayNode.delayTime.value = 0.34;
-  const feedback = actx.createGain();
-  feedback.gain.value = 0.28;
-  const delayFilter = actx.createBiquadFilter();
-  delayFilter.type = "lowpass";
-  delayFilter.frequency.value = 2200;
-
-  delayNode.connect(feedback);
-  feedback.connect(delayFilter);
-  delayFilter.connect(delayNode);
-  delayNode.connect(masterGain);
-
-  leadFilter = actx.createBiquadFilter();
-  leadFilter.type = "lowpass";
-  leadFilter.frequency.value = 1400;
-  leadFilter.Q.value = 0.7;
-  leadFilter.connect(masterGain);
-  leadFilter.connect(delayNode);
-
-  masterGain.connect(actx.destination);
-
-  startPad();
-  scheduleLead();
-}
-
-function startPad(){
-  stopPad();
-  const chord = chordTones[chordIdx % chordTones.length];
-  chord.forEach(freq=>{
-    const osc = actx.createOscillator();
-    osc.type = "triangle";
-    osc.frequency.value = freq;
-    const g = actx.createGain();
-    g.gain.value = 0;
-    g.gain.linearRampToValueAtTime(0.05, actx.currentTime + 2);
-    osc.connect(g);
-    g.connect(masterGain);
-    osc.start();
-    padOsc.push({osc, g});
-  });
-  chordIdx++;
-  if(running) setTimeout(startPad, 6000);
-}
-
-function stopPad(){
-  padOsc.forEach(({osc,g})=>{
-    try{
-      g.gain.linearRampToValueAtTime(0, actx.currentTime + 1);
-      osc.stop(actx.currentTime + 1.1);
-    }catch(e){}
-  });
-  padOsc = [];
-}
-
-function playLeadNote(freq, dur){
-  const osc = actx.createOscillator();
-  osc.type = "sawtooth";
-  osc.frequency.value = freq;
-
-  const vibrato = actx.createOscillator();
-  vibrato.frequency.value = 5.2;
-  const vibratoGain = actx.createGain();
-  vibratoGain.gain.value = 4;
-  vibrato.connect(vibratoGain);
-  vibratoGain.connect(osc.frequency);
-  vibrato.start();
-  vibrato.stop(actx.currentTime + dur + 0.2);
-
-  const g = actx.createGain();
-  const t = actx.currentTime;
-  g.gain.setValueAtTime(0, t);
-  g.gain.linearRampToValueAtTime(0.16, t + 0.08);
-  g.gain.linearRampToValueAtTime(0.1, t + dur*0.6);
-  g.gain.linearRampToValueAtTime(0, t + dur);
-
-  osc.connect(leadFilter);
-  osc.connect(g);
-  g.connect(masterGain);
-
-  osc.start(t);
-  osc.stop(t + dur + 0.1);
-}
-
-function scheduleLead(){
-  if(!running) return;
-  if(Math.random() > 0.22){
-    const note = scaleBbMajorPent[Math.floor(Math.random()*scaleBbMajorPent.length)];
-    const dur = 0.35 + Math.random()*0.5;
-    playLeadNote(note, dur);
-  }
-  const next = 380 + Math.random()*340;
-  schedulerId = setTimeout(scheduleLead, next);
+function setPlayingUI(isPlaying){
+  musicBtn.classList.toggle("playing", isPlaying);
+  musicBtn.setAttribute("aria-pressed", isPlaying ? "true" : "false");
+  musicBtn.title = isPlaying ? "Jeda musik" : "Putar musik";
 }
 
 function toggleMusic(){
-  const btn = document.getElementById("musicBtn");
-  if(!running){
-    if(!actx) initAudio(); else actx.resume();
-    running = true;
-    scheduleLead();
-    btn.classList.add("playing");
-    btn.setAttribute("aria-pressed","true");
-    btn.title = "Jeda musik";
+  if(bgMusic.paused){
+    bgMusic.play().then(() => setPlayingUI(true)).catch(() => setPlayingUI(false));
   } else {
-    running = false;
-    clearTimeout(schedulerId);
-    if(masterGain) masterGain.gain.linearRampToValueAtTime(0.0001, actx.currentTime + 0.8);
-    stopPad();
-    btn.classList.remove("playing");
-    btn.setAttribute("aria-pressed","false");
-    btn.title = "Putar musik instrumental";
+    bgMusic.pause();
+    setPlayingUI(false);
   }
 }
 
-document.getElementById("musicBtn").addEventListener("click", toggleMusic);
+musicBtn.addEventListener("click", toggleMusic);
+bgMusic.addEventListener("play", () => setPlayingUI(true));
+bgMusic.addEventListener("pause", () => setPlayingUI(false));
 
-window.addEventListener("load", () => { toggleMusic(); });
+/* Coba putar otomatis saat halaman dibuka — browser umumnya memblokir ini
+   sampai ada interaksi pengguna, jadi dipasang juga fallback: musik akan
+   otomatis mulai pada klik/tap pertama di halaman kalau autoplay gagal. */
+window.addEventListener("load", () => {
+  bgMusic.play().then(() => setPlayingUI(true)).catch(() => setPlayingUI(false));
+});
 document.body.addEventListener("click", function primeAudio(){
-  if(actx && actx.state === "suspended") actx.resume();
+  if(bgMusic.paused) bgMusic.play().then(() => setPlayingUI(true)).catch(() => {});
   document.body.removeEventListener("click", primeAudio);
 }, { once:true });
 </script>
