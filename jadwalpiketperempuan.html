@@ -296,9 +296,7 @@
 <script>
 /* ============ JADWAL ============ */
 
-// DATA FIX (MULAI 17 APRIL) — koma ganda pada minggu 24 April sudah diperbaiki
-// (sebelumnya menyisipkan satu slot kosong/undefined di antara "Ratih Cristina Dewi"
-// dan "Tina Fitriani"; sekarang keduanya tampil sebagai anggota tim yang sama).
+// DATA HISTORIS (arsip) — 17 April s/d 5 Juni 2026, tidak diubah.
 const jadwalAwal = [
 {
 tanggal:"2026-04-17",
@@ -330,9 +328,20 @@ petugas:["Vera Gustina","Resti Tiaranti","Vanissa Aldi","Rodiana Wirasati"]
 }
 ];
 
-// kumpulkan semua nama
-let semuaNama = [];
-jadwalAwal.forEach(j => semuaNama.push(...j.petugas));
+// ROTASI BARU (revisi) — 3 orang sebelumnya dihilangkan dari tim.
+// 24 nama sisanya digabung jadi satu daftar bulat (namaPetugas), lalu
+// tiap Jumat diambil 4 orang berikutnya secara berurutan dan berputar
+// (circular). Karena 24 nama ÷ 4 orang/minggu = siklus penuh 6 minggu,
+// tiap orang hanya kebagian 1x setiap 6 minggu — jadi dijamin tidak
+// ada yang bertugas 2x dalam bulan yang sama (maksimal 5 Jumat/bulan,
+// masih di bawah siklus 6 minggu).
+const namaPetugas = [
+  "Sri Wahyuni","Megawati","Vera Gustina","Resti Tiaranti","Vanissa Aldi","Rodiana Wirasati",
+  "Sukmayani","Novia Dwi A","Lisa Susanti","Annisa Angraini","Selvia","Siti Fatimah",
+  "Dwi Febri C","Tri Indah R","Yulia Anggraita","Dewi Wardati","Ratih Cristina Dewi","Tina Fitriani",
+  "Khairiah","Misnah","Ayuni Apri Lanika","Sri Suryani","Afrinola Mandrasari","Ema Hikmah"
+];
+const JUMLAH_PETUGAS_PER_MINGGU = 4;
 
 // cari Jumat berjalan
 function getNextFriday(){
@@ -344,18 +353,16 @@ function getNextFriday(){
   return friday;
 }
 
-// generate lanjutan
+// generate lanjutan setelah data historis, pakai rotasi 4 mingguan per posisi
 function generateSchedule(){
   let schedule = [...jadwalAwal];
-  let index = semuaNama.length;
   let last = new Date(jadwalAwal[jadwalAwal.length-1].tanggal);
 
-  for(let i=0;i<30;i++){
+  for(let i=0;i<40;i++){
     last.setDate(last.getDate()+7);
-    let team = [];
-    for(let j=0;j<6;j++){
-      team.push(semuaNama[index % semuaNama.length]);
-      index++;
+    const team = [];
+    for(let j=0;j<JUMLAH_PETUGAS_PER_MINGGU;j++){
+      team.push(namaPetugas[(i*JUMLAH_PETUGAS_PER_MINGGU + j) % namaPetugas.length]);
     }
     schedule.push({
       tanggal: last.toISOString().split("T")[0],
@@ -392,7 +399,7 @@ function downloadExcel(){
     return d.getMonth() === now.getMonth();
   });
   const ws = XLSX.utils.aoa_to_sheet([
-    ["Tanggal","Petugas 1","Petugas 2","Petugas 3","Petugas 4","Petugas 5","Petugas 6"],
+    ["Tanggal","Petugas 1","Petugas 2","Petugas 3","Petugas 4"],
     ...dataBulan.map(s => [s.tanggal, ...s.petugas])
   ]);
   const wb = XLSX.utils.book_new();
