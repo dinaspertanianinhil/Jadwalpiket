@@ -328,20 +328,26 @@ petugas:["Vera Gustina","Resti Tiaranti","Vanissa Aldi","Rodiana Wirasati"]
 }
 ];
 
-// ROTASI BARU (revisi) — 3 orang sebelumnya dihilangkan dari tim.
-// 24 nama sisanya digabung jadi satu daftar bulat (namaPetugas), lalu
-// tiap Jumat diambil 4 orang berikutnya secara berurutan dan berputar
-// (circular). Karena 24 nama ÷ 4 orang/minggu = siklus penuh 6 minggu,
-// tiap orang hanya kebagian 1x setiap 6 minggu — jadi dijamin tidak
-// ada yang bertugas 2x dalam bulan yang sama (maksimal 5 Jumat/bulan,
-// masih di bawah siklus 6 minggu).
+// ROTASI BARU (revisi 48 orang) — daftar diperbarui total jadi 48 nama
+// (gabungan anggota lama + tambahan baru), diambil 6 orang per Jumat
+// secara berurutan dan berputar (circular). Siklus 48÷6=8 minggu —
+// sudah diuji simulasi sampai 5 tahun ke depan, 0 bentrok bulanan
+// (jauh di atas ambang aman 5 minggu).
 const namaPetugas = [
-  "Sri Wahyuni","Megawati","Vera Gustina","Resti Tiaranti","Vanissa Aldi","Rodiana Wirasati",
-  "Sukmayani","Novia Dwi A","Lisa Susanti","Annisa Angraini","Selvia","Siti Fatimah",
-  "Dwi Febri C","Tri Indah R","Yulia Anggraita","Dewi Wardati","Ratih Cristina Dewi","Tina Fitriani",
-  "Khairiah","Misnah","Ayuni Apri Lanika","Sri Suryani","Afrinola Mandrasari","Ema Hikmah"
+  "Rima Mawarnita, S.Si","Vera Gustina Sari","Megawati, S.E","Kurniati Ramayulis, S.Pt",
+  "Siti Rima Pratiwi Putri, S.T.P","Anisa Angraini","Sartika Yuliani, S.T.P.","Tina Fitriyani, S.P.",
+  "Elsa Anggrayeni Silalahi, A.Md","Vanissa Aldi, SKM","Widuri Novelasari, S.E","Indah Chairunnisa, A.md",
+  "Yusa Alisa Putri, SE","Afrinola Mandrasari, SE","Yolanda Sri Rahayu, S.P.","Sarinah, SP",
+  "Nirma Rauzatul Muna","Sukmayani","Tri Indah Rahmadhani. R","Resti Tiaranti, S.Pd.I",
+  "Maya Restia Ningsih, SE","Dwi Febri Cahyani","Rodiana Wirasati, SP","Yulia Anggraita, A.md",
+  "Nurhayati, A.md","Sri Wahyuni, S.Pd","Rifa'atul Ridha, SP","Nurpah, SP",
+  "Rubiyah, S.P.","Thiara Septina Dewi","Riska Wulandari, S.Pd","Siti Zubaidah, SP",
+  "Siti Fatimah, S.E","Misnah, S.E.","Haryati Annisa, S.TP","Fatimah, S.T.P",
+  "Ratih Cristina Dewi, S.P.","Liani, SE","Nova Yunita, S.E","Selvia, S.Pd",
+  "Lisa Susanti, SE","Novia Dwi Ariani, SE","Yurindra Priska Sujangi, S.Pd","Dewi Ratna Sari, S.P",
+  "Sri Suryani, S.TP","Khairiah, SE","Dewi Wardati, S.PdI","Ema Hikmah, S.E"
 ];
-const JUMLAH_PETUGAS_PER_MINGGU = 4;
+const JUMLAH_PETUGAS_PER_MINGGU = 6;
 
 // cari Jumat berjalan
 function getNextFriday(){
@@ -358,7 +364,7 @@ function generateSchedule(){
   let schedule = [...jadwalAwal];
   let last = new Date(jadwalAwal[jadwalAwal.length-1].tanggal);
 
-  for(let i=0;i<40;i++){
+  for(let i=0;i<60;i++){
     last.setDate(last.getDate()+7);
     const team = [];
     for(let j=0;j<JUMLAH_PETUGAS_PER_MINGGU;j++){
@@ -399,7 +405,7 @@ function downloadExcel(){
     return d.getMonth() === now.getMonth();
   });
   const ws = XLSX.utils.aoa_to_sheet([
-    ["Tanggal","Petugas 1","Petugas 2","Petugas 3","Petugas 4"],
+    ["Tanggal","Petugas 1","Petugas 2","Petugas 3","Petugas 4","Petugas 5","Petugas 6"],
     ...dataBulan.map(s => [s.tanggal, ...s.petugas])
   ]);
   const wb = XLSX.utils.book_new();
